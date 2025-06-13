@@ -1,38 +1,49 @@
-{% set version = "1.7.4" %}
+{% set name = "dicttoxml" %}
+{% set version = "1.7.16" %}
 
 package:
-  name: dicttoxml
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  fn: dicttoxml-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/d/dicttoxml/dicttoxml-{{ version }}.tar.gz
-  sha256: ea44cc4ec6c0f85098c57a431a1ee891b3549347b07b7414c8a24611ecf37e45
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 6f36ce644881db5cd8940bee9b7cb3f3f6b7b327ba8a67d83d3e2caa0538bf9d
 
 build:
-  number: 1
-  script: python -m pip install --no-deps --ignore-installed .
+  number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: true  # [py<36]
 
 requirements:
   host:
     - pip
     - python
-
+    - setuptools
+    - wheel
   run:
     - python
 
 test:
   imports:
     - dicttoxml
+  commands:
+    - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+  requires:
+    - pip
 
 about:
   home: https://github.com/quandyfactory/dicttoxml
   license: GPL-2.0
-  summary: 'Converts a Python dictionary or other native data type into a valid XML string. '
   license_family: GPL
   license_file: LICENCE.txt
+  summary: Converts a Python dictionary or other native data type into a valid XML string.
+  description: |
+    Converts a Python dictionary or other native data type into a valid XML string. 
+    This is a fork that support Python 3.9 and forward versions and drop all EOL (<=3.6) versions altogether. 
+    It is mostly backward-compatible, act as a drop-in replacement.
   dev_url: https://github.com/quandyfactory/dicttoxml
-  doc_url: https://github.com/quandyfactory/dicttoxml
+  doc_url: https://dicttoxml.readthedocs.io
 
 extra:
   recipe-maintainers:
